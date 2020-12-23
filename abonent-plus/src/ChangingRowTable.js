@@ -8,6 +8,7 @@ class changingValuesTable extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleUpdating = this.handleUpdating.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        this.handleCommitTransaction = this.handleCommitTransaction.bind(this);
     }
 
     componentDidMount() {
@@ -56,6 +57,17 @@ class changingValuesTable extends React.Component {
         })
     }
 
+    handleCommitTransaction(e) {
+        let login = { login: localStorage.getItem('login') };
+        fetch(`http://localhost:5000/transaction/commit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(login)
+        }).then(() => this.props.handleClosingModal()).catch(err => console.log(err))
+    }
+
     handleUpdating(e) {
         let changingRow = this.state.changingRow;
         if (!!this.props.primaryKeys.filter(item => `${item}` === `${changingRow[0].value}`).length && changingRow[0].value !== this.state.pkField) {
@@ -102,7 +114,7 @@ class changingValuesTable extends React.Component {
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <p class="modal-card-title">Окно редактирования записи</p>
-                        <button class="delete" aria-label="close" onClick={this.props.handleClosingModal}></button>
+                        <button class="delete" aria-label="close" onClick={this.handleCommitTransaction}></button>
                     </header>
                     <section class="modal-card-body">
                         {changingRow.map((element, idx) =>
@@ -120,7 +132,7 @@ class changingValuesTable extends React.Component {
                             <button class="button is-danger" onClick={this.handleDelete}>Удалить запись</button> :
                             <button class="button is-danger" disabled>Удалить запись</button>
                         }
-                        <button class="button" onClick={this.props.handleClosingModal}>Отмена</button>
+                        <button class="button" onClick={this.handleCommitTransaction}>Отмена</button>
                     </footer>
                 </div>
             </div>

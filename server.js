@@ -1,5 +1,5 @@
 const express = require('express');
-const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction } = require('./DataBaseAPI')
+const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction, users } = require('./DataBaseAPI')
 //const { users } = require('./userAPI.js');
 const { isUserExist, authentification, registration } = require('./UserAPI');
 require('dotenv').config();
@@ -11,33 +11,34 @@ app.listen(5000);
 const config = `mssql://${process.env.login}:${process.env.password}@localhost/AbonentPlus`;
 const sql = require('mssql');
 
-
 async function DBconnection() {
     try {
-        await sql.connect(config)
-        const transaction = new sql.Transaction();
+        let login = "vasya";
+        await sql.connect(config);
+        await createTransaction(login);
+        let transaction = users[login].transaction;
         await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
         const request = new sql.Request(transaction);
-        await request
-            .input('Fio', sql.NVarChar, "Пронин В.Е.")
-            .query(`UPDATE Executor SET Fio = @fio WHERE ExecutorCD = ${18}`);
-        console.log("Transaction committed");
-        //await transaction.commit();
-        //console.log(result.recordset + "ah");
-    } catch (err) {
+        let result;
+        try {
+            result = await request
+                .query(`SELECT * FROM ABONENT`);
+        } catch (err) { err => console.log(err) }
+        await commitTransaction(login);
+        return result;
+    } catch (e) {
         if (err) throw (err);
         console.log(err);
-        console.log(err.number);
-    } finally { }
+    }
 }
 
 app.get('/', async function (req, res) {
     try {
-        await DBconnection();
+        let result = await DBconnection();
         //await DBconnection();
         //console.log(await isUserExistance("vlad"))
         //await authentification("vlad", "777");
-        res.send('result');
+        res.send(result);
     }
     catch (e) {
         console.error(e)
@@ -89,10 +90,8 @@ app.post('/change/:table', async function (req, res) {
         let { table } = req.params;
         let { changingRow, pkField, login } = req.body;
         for (item of changingRow) {
-            console.log(item);
             await updateTable(login, table, item, pkField);
         }
-        console.log("Table is updated")
         await commitTransaction(login);
         res.send("all right")
     }
@@ -105,7 +104,6 @@ app.post('/delete/:table', async function (req, res) {
     try {
         let { table } = req.params;
         let { pkField, login } = req.body;
-        console.log(table, login, pkField.key, pkField.value);
         await deleteRow(table, login, pkField.key, pkField.value);
         await commitTransaction(login);
         res.send("all right")
@@ -119,7 +117,8 @@ app.post('/fakeUpdate/:table', async function (req, res) {
     try {
         let { table } = req.params;
         let { changingRow, pkField, login } = req.body;
-        await updateTable(login, table, changingRow[0], pkField);
+        let newPkField = { key: changingRow[0].key, value: pkField }
+        await updateTable(login, table, changingRow[0], newPkField);
         res.send("all right")
     }
     catch (err) {
@@ -143,7 +142,7 @@ app.post('/add/:table', async function (req, res) {
 app.post('/transaction/:action', async function (req, res) {
     try {
         let { action } = req.params;
-        let { login, table } = req.body;
+        let { login } = req.body;
         if (action === 'create') { await createTransaction(login) }
         else await commitTransaction(login);
         res.send("all right");

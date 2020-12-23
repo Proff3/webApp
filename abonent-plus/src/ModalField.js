@@ -11,7 +11,7 @@ class ModalField extends React.Component {
     }
 
     handleChange(e) {
-        let value = e.target.value === `null` ? undefined : e.target.value;
+        let value = e.target.value === `null` || e.target.value === `` ? undefined : e.target.value;
         e.target.classList.remove("is-danger")
         this.props.handleChange(this.props.idx, value);
     }
@@ -31,6 +31,9 @@ class ModalField extends React.Component {
                     let foreignKeys = [];
                     result.recordset.forEach(row => foreignKeys.push(Object.values(row)[0]));
                     this.setState({ foreignKeys, isLoading: false });
+                })
+                .then(() => {
+                    if (this.state.foreignKeys[0] !== undefined && this.props.value === null) this.props.handleChange(this.props.idx, this.state.foreignKeys[0]);
                 })
                 .catch(err => console.log(err));
         }

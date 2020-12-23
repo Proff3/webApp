@@ -58,9 +58,9 @@ class addingRowTable extends React.Component {
                 return res.json();
             };
         }).then(errMes => {
+            console.log(errMes.originalError.info.message);
             if (errMes) {
-                alert(`Некорректное значение: ${errMes.value} поля: ${errMes.key}`);
-                document.getElementById(errMes.key).classList.toggle("is-danger").focus();
+                alert(`Введено некорректное значение! Ошибка: ${errMes.originalError.info.message}`);
             };
         }).catch(err => console.dir(err));
     }

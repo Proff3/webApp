@@ -72,7 +72,6 @@ class Table extends React.Component {
     }
 
     async handleChangeRow(idx) {
-        console.log("create");
         // await this.createTransaction();
         // this.setState({ numRowChanging: idx })
         this.createTransaction().then(() =>
@@ -86,7 +85,6 @@ class Table extends React.Component {
     }
 
     async handleAddingRow() {
-        console.log("create");
         // await this.createTransaction();
         // this.setState(prevState => ({ isAdding: !prevState.isAdding }));
         this.createTransaction().then(() =>
