@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json())//ПРОТЕСТИТЬ!!!!!!!!!!!!!!!!!!!!!!!
 app.listen(5000);
-const config = `mssql://${process.env.login}:${process.env.password}@localhost/AbonentPlus`;
+const config = `mssql://${process.env.login}:${process.env.password}@localhost/ABONENT_MSSQL`;
 const sql = require('mssql');
 
 async function DBconnection() {
