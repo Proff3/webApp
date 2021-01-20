@@ -37,8 +37,16 @@ async function getTable(login, table) {
         let transaction = users[login].transaction;
         await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
         const request = new localSql.Request(transaction);
-        let result = await request
-            .query(`SELECT * FROM ${table}`);
+        let result
+        try {
+            result = await request
+                .query(`SELECT * FROM ${table}`);
+        } catch (err) {
+            if (err.code !== "ETIMEOUT") {
+                console.log(err);
+                throw (err);
+            }
+        }
         await commitTransaction(login);
         return result;
     } catch (e) {

@@ -1,10 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const { createUserConnection, isUserExistance } = require('./UserAPI.js')
-const isolation = require('tedious').ISOLATION_LEVEL;
-var bodyParser = require('body-parser')//от expressjs почитать в документации
 var cors = require('cors'); //от expressjs почитать в документации
-const { User } = require('./User.js');
 const app = express();
 app.use(cors());
 var Connection = require('tedious').Connection;

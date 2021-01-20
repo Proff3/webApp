@@ -1,6 +1,4 @@
 import React from "react";
-import Element from "./Element.js"
-
 class Row extends React.Component {
     constructor(props) {
         super(props);
@@ -9,9 +7,7 @@ class Row extends React.Component {
         this.handleDelete = this.handleDelete.bind(this);
         this.handleChangeRow = this.handleChangeRow.bind(this);
     }
-
     handleChangeRow(e) {
-        //console.log(this.props.rowNum)
         this.props.handleChangeRow(this.props.rowNum);
     }
 
@@ -32,7 +28,7 @@ class Row extends React.Component {
         }
         return <tr>{data.map((item, idx) => {
             let value = item.key.includes("DATE") && item.value !== null ? item.value.slice(0, 10) : item.value;
-            return idx === 0 ? <th key={idx} onClick={this.handleChangeRow}>{value}</th> : <td key={idx} onClick={this.handleChangeRow}>{`${value}`}</td>
+            return idx === 0 ? <th style={{ "cursor": "pointer" }} key={idx} onClick={this.handleChangeRow}>{value}</th> : <td style={{ "cursor": "pointer" }} key={idx} onClick={this.handleChangeRow}>{`${value}`}</td>
         })}</tr>
     }
 }

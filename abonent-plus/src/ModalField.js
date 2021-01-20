@@ -33,7 +33,7 @@ class ModalField extends React.Component {
                     this.setState({ foreignKeys, isLoading: false });
                 })
                 .then(() => {
-                    if (this.state.foreignKeys[0] !== undefined && this.props.value === null) this.props.handleChange(this.props.idx, this.state.foreignKeys[0]);
+                    if (this.state.foreignKeys[0] !== undefined && this.props.value === null && this.props.action === "add") this.props.handleChange(this.props.idx, this.state.foreignKeys[0]);
                 })
                 .catch(err => console.log(err));
         }

@@ -1,6 +1,29 @@
 import React from "react";
 import ModalField from './ModalField'
 
+function getTitle(table) {
+    switch (table) {
+        case "abonent":
+            return "абонента";
+        case "executor":
+            return "исполнителя";
+        case "disrepair":
+            return "неисправности";
+        case "street":
+            return "улицы";
+        case "service":
+            return "услуги";
+        case "nachislSumma":
+            return "начисления";
+        case "paySumma":
+            return "оплаты";
+        case "request":
+            return "заявки";
+        default:
+            return "строки"
+    }
+}
+
 class addingRowTable extends React.Component {
     constructor(props) {
         super(props);
@@ -66,13 +89,14 @@ class addingRowTable extends React.Component {
     }
 
     render() {
+        let title = getTitle(this.props.table);
         let changingRow = this.state.changingRow;
         return (
             <div class="modal is-active">
                 <div class="modal-background"></div>
                 <div class="modal-card">
                     <header class="modal-card-head">
-                        <p class="modal-card-title">Окно добавления записи</p>
+                        <p class="modal-card-title">Окно добавления {title}</p>
                         <button class="delete" aria-label="close" onClick={this.props.handleClosingModal}></button>
                     </header>
                     <section class="modal-card-body">
@@ -82,7 +106,8 @@ class addingRowTable extends React.Component {
                                 handleChange={this.handleChange}
                                 key={element.key} idx={idx}
                                 title={element.key}
-                                value={element.value}>
+                                value={element.value}
+                                action={"add"}>
                             </ModalField>)}
                     </section>
                     <footer class="modal-card-foot">

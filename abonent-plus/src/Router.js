@@ -14,7 +14,6 @@ class Router extends React.Component {
                 <Switch>
                     <Route path="/table/">
                         <Table key={this.props.table} table={this.props.table}></Table>
-
                     </Route>
                     <Route path="/">
                         <Redirect to="/table/"></Redirect>

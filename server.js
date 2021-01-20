@@ -68,9 +68,10 @@ app.post('/table/:table', async function (req, res) {
         for (let [key, value] of Object.entries(columns)) titles.push(key);
         res.send(Object.assign({}, result, { titles }));
     }
-    catch (e) {
-        console.error(e)
-        res.status(500).send(e.message);
+    catch (err) {
+        if (err.code !== "ETIMEOUT") res.send({ message: "В данный момент таблица редактируется!" })
+        console.error(err)
+        res.status(500).send(err.message);
     }
 });
 

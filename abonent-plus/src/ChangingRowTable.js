@@ -1,6 +1,29 @@
 import React from "react";
 import ModalField from './ModalField'
 
+function getTitle(table) {
+    switch (table) {
+        case "abonent":
+            return "абонента";
+        case "executor":
+            return "исполнителя";
+        case "disrepair":
+            return "неисправности";
+        case "street":
+            return "улицы";
+        case "service":
+            return "услуги";
+        case "nachislSumma":
+            return "начисления";
+        case "paySumma":
+            return "оплаты";
+        case "request":
+            return "заявки";
+        default:
+            return "строки"
+    }
+}
+
 class changingValuesTable extends React.Component {
     constructor(props) {
         super(props);
@@ -105,15 +128,15 @@ class changingValuesTable extends React.Component {
     }
 
     render() {
-        console.log(this.props.table)
-        let informTables = ["abonent", "nachislSumma", "paySumma", "request"];
+        console.log(this.props.table);
+        let title = getTitle(this.props.table);
         let changingRow = this.state.changingRow;
         return (
             <div class="modal is-active">
                 <div class="modal-background"></div>
                 <div class="modal-card">
                     <header class="modal-card-head">
-                        <p class="modal-card-title">Окно редактирования записи</p>
+                        <p class="modal-card-title">Окно редактирования {title}</p>
                         <button class="delete" aria-label="close" onClick={this.handleCommitTransaction}></button>
                     </header>
                     <section class="modal-card-body">
@@ -128,10 +151,7 @@ class changingValuesTable extends React.Component {
                     </section>
                     <footer class="modal-card-foot">
                         <button class="button is-success" onClick={this.handleUpdating}>Сохранить изменения</button>
-                        {informTables.find(item => item === this.props.table) === undefined ?
-                            <button class="button is-danger" onClick={this.handleDelete}>Удалить запись</button> :
-                            <button class="button is-danger" disabled>Удалить запись</button>
-                        }
+                        <button class="button is-danger" onClick={this.handleDelete}>Удалить запись</button>
                         <button class="button" onClick={this.handleCommitTransaction}>Отмена</button>
                     </footer>
                 </div>

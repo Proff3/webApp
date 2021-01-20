@@ -51,13 +51,21 @@ class Table extends React.Component {
         })
             .then(res => res.json())
             .then(result => {
-                let rows = [];
-                for (let value of Object.values(result.recordset)) rows.push(value);
-                this.setState({
-                    isLoaded: true,
-                    response: result,
-                    rows
-                });
+                console.log(result.message);
+                if (result.message) {
+                    this.setState({
+                        isLoaded: true,
+                        error: { message: result.message }
+                    });
+                } else {
+                    let rows = [];
+                    for (let value of Object.values(result.recordset)) rows.push(value);
+                    this.setState({
+                        isLoaded: true,
+                        response: result,
+                        rows
+                    });
+                }
             }, error => {
                 this.setState({
                     isLoaded: true,
