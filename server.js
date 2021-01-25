@@ -14,6 +14,9 @@ const port = process.env.PORT || 5000
 
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'abonent-plus', 'build')));
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'abonent-plus', 'index.html'));
+});
 app.listen(port);
 app.post('/authentification', async function (req, res) {
     try {
