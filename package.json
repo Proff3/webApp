@@ -17,5 +17,8 @@
     "mssql": "^6.2.3",
     "nodemon": "^2.0.6",
     "tedious": "^9.2.1"
+  },
+  "devDependencies": {
+    "path": "^0.12.7"
   }
 }
