@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction, users } = require('./DataBaseAPI')
 //const { users } = require('./userAPI.js');
 const { isUserExist, authentification, registration } = require('./UserAPI');
@@ -7,44 +8,12 @@ var cors = require('cors'); //от expressjs почитать в докумен�
 const app = express();
 app.use(cors());
 app.use(express.json())//ПРОТЕСТИТЬ!!!!!!!!!!!!!!!!!!!!!!!
-app.listen(5000);
-const config = `mssql://${process.env.login}:${process.env.password}@localhost/ABONENT_MSSQL`;
-const sql = require('mssql');
 
-async function DBconnection() {
-    try {
-        let login = "vasya";
-        await sql.connect(config);
-        await createTransaction(login);
-        let transaction = users[login].transaction;
-        await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
-        const request = new sql.Request(transaction);
-        let result;
-        try {
-            result = await request
-                .query(`SELECT * FROM ABONENT`);
-        } catch (err) { err => console.log(err) }
-        await commitTransaction(login);
-        return result;
-    } catch (e) {
-        if (err) throw (err);
-        console.log(err);
-    }
-}
+const port = process.env.PORT || 5000
+app.listen(port);
 
-app.get('/', async function (req, res) {
-    try {
-        let result = await DBconnection();
-        //await DBconnection();
-        //console.log(await isUserExistance("vlad"))
-        //await authentification("vlad", "777");
-        res.send(result);
-    }
-    catch (e) {
-        console.error(e)
-        res.status(500).send(e.message);
-    }
-});
+app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'abonent-plus', 'build')));
 
 app.post('/authentification', async function (req, res) {
     try {

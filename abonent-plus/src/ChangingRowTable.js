@@ -42,7 +42,7 @@ class changingValuesTable extends React.Component {
         let pkField = changingRow[0].value;
         this.setState({ changingRow, pkField });
         let body = Object.assign({}, { changingRow, pkField, login: localStorage.getItem('login') });
-        fetch(`http://localhost:5000/fakeUpdate/${this.props.table}`, {
+        fetch(`/fakeUpdate/${this.props.table}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -54,7 +54,6 @@ class changingValuesTable extends React.Component {
     handleChange(idx, value) {
         let changingRow = this.state.changingRow;
         changingRow[idx].value = typeof changingRow[idx].value === 'number' ? +value : value;
-        //console.log(changingRow[idx].value);
         this.setState({ changingRow });
     }
 
@@ -62,7 +61,7 @@ class changingValuesTable extends React.Component {
         e.target.classList.toggle("is-loading");
         let enviroment = this;
         let pkField = { key: this.state.changingRow[0].key, value: this.state.pkField };
-        fetch(`http://localhost:5000/delete/${this.props.table}`, {
+        fetch(`/delete/${this.props.table}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -82,7 +81,7 @@ class changingValuesTable extends React.Component {
 
     handleCommitTransaction(e) {
         let login = { login: localStorage.getItem('login') };
-        fetch(`http://localhost:5000/transaction/commit`, {
+        fetch(`/transaction/commit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -101,7 +100,7 @@ class changingValuesTable extends React.Component {
         let enviroment = this;
         let pkField = { key: changingRow[0].key, value: this.state.pkField };
         let body = Object.assign({}, { changingRow, pkField, login: localStorage.getItem('login') });
-        fetch(`http://localhost:5000/change/${this.props.table}`, {
+        fetch(`/change/${this.props.table}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -114,8 +113,6 @@ class changingValuesTable extends React.Component {
                 enviroment.props.updateTable();
                 enviroment.props.handleClosingModal();
             } else {
-                // console.log(JSON.parse(res));
-                // alert(`Некорректное значение: ${res.value}`);
                 e.target.classList.toggle("is-loading");
                 return res.json();
             };

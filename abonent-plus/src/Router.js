@@ -2,7 +2,7 @@ import React from 'react'
 import Table from './Table';
 import Authentification from './Authentification';
 import Registration from './Registration';
-import { Switch, Route, Link, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 
 

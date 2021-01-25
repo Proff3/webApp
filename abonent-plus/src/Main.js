@@ -12,6 +12,7 @@ class Main extends React.Component {
         this.state = { isAuthentificated: false, table: 'abonent' };
         this.changeAuth = this.changeAuth.bind(this);
         this.changeTable = this.changeTable.bind(this);
+        this.handleBurger = this.handleBurger.bind(this);
     }
 
     changeAuth() {
@@ -20,6 +21,11 @@ class Main extends React.Component {
 
     changeTable(table) {
         this.setState({ table })
+    }
+
+    handleBurger() {
+        document.getElementById("burger").classList.toggle("is-active");
+        document.querySelector(".navbar-menu").classList.toggle("is-active")
     }
 
     componentDidMount() {
@@ -35,13 +41,13 @@ class Main extends React.Component {
                 <BrowserRouter>
                     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
                         <div class="navbar-brand">
-                            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" href="/">
+                            <div onClick={this.handleBurger} role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" id="burger">
                                 <span aria-hidden="true"></span>
                                 <span aria-hidden="true"></span>
                                 <span aria-hidden="true"></span>
-                            </a>
+                            </div>
                         </div>
-                        <div id="navbarBasicExample" class="navbar-menu">
+                        <div id="navbarBasicExample" className="navbar-menu">
                             {this.state.isAuthentificated ? <NavbarLinks changeTable={this.changeTable}></NavbarLinks> : null}
                             <NavbarLogin auth={this.state.isAuthentificated} changeAuth={this.changeAuth}></NavbarLogin>
                         </div>

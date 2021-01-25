@@ -24,11 +24,11 @@ function NavbarLogin(props) {
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
-                    <Link to="/registration"> {/* Компонент Authentification */}
-                        <button class="button is-primary" style={{ "margin-right": "5px" }}><strong>Войти</strong></button>
+                    <Link to="/"> {/* Компонент Authentification */}
+                        <button className="button is-primary" style={{ "marginRight": "5px" }}><strong>Войти</strong></button>
                     </Link>
-                    <Link to="/">             {/* Компонент Registration */}
-                        <button class="button is-light">Зарегистрироваться</button>
+                    <Link to="/registration">             {/* Компонент Registration */}
+                        <button className="button is-light">Зарегистрироваться</button>
                     </Link>
                 </div>
             </div>

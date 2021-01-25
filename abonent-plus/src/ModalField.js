@@ -21,7 +21,7 @@ class ModalField extends React.Component {
             let table = this.props.title.slice(0, -2).toLowerCase();
             if (table === "account") table = "abonent";
             if (table === "failure") table = "disrepair";
-            fetch(`http://localhost:5000/changeRow/${table}`, {
+            fetch(`/changeRow/${table}`, {
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },

@@ -64,7 +64,7 @@ class addingRowTable extends React.Component {
         e.target.classList.toggle("is-loading");
         let enviroment = this;
         let body = Object.assign({}, { changingRow, login: localStorage.getItem('login') });
-        fetch(`http://localhost:5000/add/${this.props.table}`, {
+        fetch(`/add/${this.props.table}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'

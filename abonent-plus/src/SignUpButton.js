@@ -1,4 +1,4 @@
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import React from 'react';
 
 class LogInButton extends React.Component {
@@ -11,7 +11,7 @@ class LogInButton extends React.Component {
     handleClick(e) {
         let login = document.getElementById("login").value;
         let pass = document.getElementById("pass").value;
-        fetch("http://localhost:5000/registration", {
+        fetch("/registration", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'

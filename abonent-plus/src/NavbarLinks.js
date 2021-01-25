@@ -1,9 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
-
-function handleClick(props, table) {
-    document.querySelector(".navbar-dropdown").style.display = "none";
-    props.changeTable(table);
-}
+import { NavLink } from "react-router-dom";
 
 function NavbarLinks(props) {
     const navLinkStyle = { color: "#00D1B2", textDecoration: "underline" }

@@ -42,7 +42,7 @@ class Table extends React.Component {
     async updateTable() {
         this.setState({ isLoaded: false });
         let login = { login: localStorage.getItem('login') };
-        fetch(`http://localhost:5000/table/${this.props.table}`, {
+        fetch(`/table/${this.props.table}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -66,6 +66,7 @@ class Table extends React.Component {
                         rows
                     });
                 }
+                console.log(result)
             }, error => {
                 this.setState({
                     isLoaded: true,
@@ -80,8 +81,6 @@ class Table extends React.Component {
     }
 
     async handleChangeRow(idx) {
-        // await this.createTransaction();
-        // this.setState({ numRowChanging: idx })
         this.createTransaction().then(() =>
             this.setState({ numRowChanging: idx })
         );
@@ -89,12 +88,9 @@ class Table extends React.Component {
 
     handleClosingModal(e) {
         this.setState({ numRowChanging: null, isAdding: false })
-        //this.commitTransaction();
     }
 
     async handleAddingRow() {
-        // await this.createTransaction();
-        // this.setState(prevState => ({ isAdding: !prevState.isAdding }));
         this.createTransaction().then(() =>
             this.setState(prevState => ({ isAdding: !prevState.isAdding }))
         );
@@ -103,7 +99,7 @@ class Table extends React.Component {
     async createTransaction() {
         //console.log('create');
         let login = { login: localStorage.getItem('login'), table: this.props.table };
-        return fetch(`http://localhost:5000/transaction/create`, {
+        return fetch(`/transaction/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -115,7 +111,7 @@ class Table extends React.Component {
     async commitTransaction() {
         console.log('commit');
         let login = { login: localStorage.getItem('commit') };
-        return fetch(`http://localhost:5000/transaction/commit`, {
+        return fetch(`/transaction/commit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
