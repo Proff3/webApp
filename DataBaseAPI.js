@@ -1,6 +1,6 @@
 require('dotenv').config()
 const User = require('./User.js');
-const config = `mssql://${process.env.login}:${process.env.password}@localhost/AbonentPlus`;
+const config = `mssql://${process.env.login}:${process.env.password}@https://abonent-plus-pet-project.herokuapp.com/AbonentPlus`;
 const sql = require('mssql');
 
 let users = {};
