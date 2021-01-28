@@ -21,14 +21,12 @@ async function isUserExist(login) {
 
 async function authentification(login, pass) {
     try {
-
         this.connection = await sql.connect(config)
         const request = connection.request();
         let result = await request
             .input('login', sql.NVarChar, login)
             .input('pass', sql.NVarChar, pass)
             .query(`SELECT * FROM Users WHERE login=@login AND password=@pass`);
-
         if (!result.recordset.length) {
             throw new Error("Логин или пароль не корректны!")
         } else {

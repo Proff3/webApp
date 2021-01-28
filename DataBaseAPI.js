@@ -1,19 +1,15 @@
 require('dotenv').config()
 const User = require('./User.js');
-const config = `mssql://${process.env.login}:${process.env.password}@https://abonent-plus-pet-project.herokuapp.com/AbonentPlus`;
+const config = `mssql://${process.env.login}:${process.env.password}@localhost/AbonentPlus`;
 const sql = require('mssql');
 
 let users = {};
-//sql.connect(config);
 
 async function updateTable(login, table, item, pkField) {
     try {
         let localSql = users[login].localSql;
-        //await createTransaction(login);
         let transaction = users[login].transaction;
-        //await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
         const request = new localSql.Request(transaction);
-        //console.log(`UPDATE ${table} SET ${item.key} = ${item.value} WHERE ${pkField.key} = ${pkField.value}`)
         try {
             await request
                 .input('value', item.value)
@@ -24,7 +20,6 @@ async function updateTable(login, table, item, pkField) {
             console.log(err);
             throw (err);
         }
-        //await commitTransaction(login);
     } catch (err) {
         throw (err);
     }
@@ -58,15 +53,11 @@ async function getTable(login, table) {
 async function deleteRow(table, login, key, value) {
     try {
         let localSql = users[login].localSql;
-        //await createTransaction(login);
         let transaction = users[login].transaction;
-        //await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
         const request = new localSql.Request(transaction);
-        //console.log(`DELETE FROM ${table} WHERE ${key} = '${value}'`);
         let result = await request
             .input('value', value)
             .query(`DELETE FROM ${table} WHERE ${key} = '${value}'`);
-        //await commitTransaction(login);
         return result;
     } catch (e) {
         if (err) throw (err);
@@ -77,9 +68,7 @@ async function deleteRow(table, login, key, value) {
 async function addRow(table, login, changingRow) {
     try {
         let localSql = users[login].localSql;
-        //await createTransaction(login);
         let transaction = users[login].transaction;
-        //await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
         const request = new localSql.Request(transaction);
         let sqlRow = ``;
         changingRow.forEach((entry, idx) => {
@@ -98,7 +87,6 @@ async function addRow(table, login, changingRow) {
             console.log(err);
             throw (err);
         }
-        //await commitTransaction(login);
     } catch (err) {
         throw (err);
     }
@@ -106,9 +94,7 @@ async function addRow(table, login, changingRow) {
 
 async function commitTransaction(login) {
     try {
-        //console.log(users[login].commit)
         await new Promise(resolve => users[login].transaction.commit(resolve));
-        //users[login].commit();
     } catch (e) {
         if (err) throw (err);
         console.log(err);
@@ -122,8 +108,6 @@ async function createTransaction(login) {
         let transaction = new localSql.Transaction();
         await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promis
         users[login] = { transaction, localSql };
-        //let transaction = users[login].transaction;
-        //console.log(transaction + "create");
     } catch (e) {
         if (err) throw (err);
         console.log(err);

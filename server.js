@@ -1,22 +1,18 @@
 const express = require('express');
 const path = require('path');
 const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction, users } = require('./DataBaseAPI')
-//const { users } = require('./userAPI.js');
 const { isUserExist, authentification, registration } = require('./UserAPI');
 require('dotenv').config();
-var cors = require('cors'); //от expressjs почитать в документации
+var cors = require('cors');
 const app = express();
 app.use(cors());
-app.use(express.json())//ПРОТЕСТИТЬ!!!!!!!!!!!!!!!!!!!!!!!
+app.use(express.json())
 
 const port = process.env.PORT || 5000
 
 
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'abonent-plus', 'build')));
-// app.get('/*', function (req, res) {
-//     res.sendFile(path.join(__dirname, 'abonent-plus', 'build', 'index.html'));
-// });
 app.listen(port);
 app.post('/authentification', async function (req, res) {
     try {
@@ -34,7 +30,6 @@ app.post('/table/:table', async function (req, res) {
         let { login } = req.body;
         let { table } = req.params;
         let result = await getTable(login, table);
-        //console.dir(result.recordsets);
         let columns = result.recordset.columns;
         let titles = [];
         for (let [key, value] of Object.entries(columns)) titles.push(key);
