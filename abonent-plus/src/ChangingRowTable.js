@@ -107,25 +107,21 @@ class changingValuesTable extends React.Component {
             },
             body: JSON.stringify(body),
         }).then((res) => {
-            console.log(res);
             if (res.status === 200) {
                 e.target.classList.toggle("is-loading");
                 enviroment.props.updateTable();
                 enviroment.props.handleClosingModal();
             } else {
                 e.target.classList.toggle("is-loading");
-                return res.json();
+                return res.json(); //throwing err message
             };
         }).then(errMes => {
-            if (errMes) {
-                alert(`Некорректное значение: ${errMes.value} поля: ${errMes.key}`);
-                document.getElementById(errMes.key).classList.toggle("is-danger").focus();
-            };
-        }).catch(err => console.dir(err));
+            alert(`Некорректное значение поля: ${errMes.key}`);
+            document.getElementById(errMes.key).classList.toggle("is-danger").focus();
+        }).catch(err => console.log(err));
     }
 
     render() {
-        console.log(this.props.table);
         let title = getTitle(this.props.table);
         let changingRow = this.state.changingRow;
         return (

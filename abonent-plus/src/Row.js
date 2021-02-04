@@ -21,9 +21,9 @@ class Row extends React.Component {
     }
 
     render() {
-
         let data = [];
         for (let [key, value] of Object.entries(this.props.item)) {
+            if (key === "EXECUTED") value = value === 1 ? true : false;
             data.push({ key, value });
         }
         return <tr>{data.map((item, idx) => {

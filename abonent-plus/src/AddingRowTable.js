@@ -34,7 +34,7 @@ class addingRowTable extends React.Component {
 
     componentDidMount() {
         let changingRow = [];
-        this.props.keys.forEach(key => changingRow.push({ key, value: null }))
+        this.props.keys.forEach(key => changingRow.push({ key, value: key === "EXECUTED" ? 0 : null }))
         this.setState({ changingRow });
     }
 
@@ -42,12 +42,10 @@ class addingRowTable extends React.Component {
         let changingRow = this.state.changingRow;
         changingRow[idx].value = typeof changingRow[idx].value === 'number' ? +value : value;
         this.setState({ changingRow });
-        console.log(this.state.changingRow);
     }
 
     handleAdding(e) {
         let changingRow = this.state.changingRow;
-        console.log(changingRow)
         if (!!this.props.primaryKeys.filter(item => `${item}` === `${changingRow[0].value}`).length) {
             alert("Вы ввели существующий первичный ключ!");
             return;
@@ -56,11 +54,11 @@ class addingRowTable extends React.Component {
             alert("Введите первичный ключ!");
             return;
         }
-        if (this.props.table === "request" && changingRow[6].value === null) {
-            alert("Установите значение в поле EXECUTED!");
-            document.getElementById("EXECUTED").classList.toggle("is-danger");
-            return;
-        }
+        // if (this.props.table === "request" && changingRow[6].value === null) {
+        //     alert("Установите значение в поле EXECUTED!");
+        //     document.getElementById("EXECUTED").classList.toggle("is-danger");
+        //     return;
+        // }
         e.target.classList.toggle("is-loading");
         let enviroment = this;
         let body = Object.assign({}, { changingRow, login: localStorage.getItem('login') });
@@ -71,21 +69,20 @@ class addingRowTable extends React.Component {
             },
             body: JSON.stringify(body),
         }).then((res) => {
-            console.log(res);
             if (res.status === 200) {
                 e.target.classList.toggle("is-loading");
                 enviroment.props.updateTable();
                 enviroment.props.handleClosingModal();
             } else {
                 e.target.classList.toggle("is-loading");
-                return res.json();
+                return res.json();//throwing err message
             };
         }).then(errMes => {
-            console.log(errMes.originalError.info.message);
-            if (errMes) {
-                alert(`Введено некорректное значение! Ошибка: ${errMes.originalError.info.message}`);
-            };
-        }).catch(err => console.dir(err));
+            alert(errMes.sqlMessage);
+            errMes.key = errMes.sqlMessage.split(" ")[6];
+            console.log(errMes.key);
+            document.getElementById(errMes.key).classList.toggle("is-danger").focus();
+        }).catch(err => console.log(err));
     }
 
     render() {

@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction, users } = require('./DataBaseAPI')
-const { isUserExist, authentification, registration } = require('./UserAPI');
+const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction } = require('./DataBaseAPI')
+const { authentification, registration } = require('./UserAPI');
 require('dotenv').config();
 var cors = require('cors');
 const app = express();
@@ -29,10 +29,10 @@ app.post('/table/:table', async function (req, res) {
     try {
         let { login } = req.body;
         let { table } = req.params;
-        let result = await getTable(login, table);
-        let columns = result.recordset.columns;
+        let recordset = await getTable(login, table);
+        let result = { recordset };//Like MS SQL Server driver
         let titles = [];
-        for (let [key, value] of Object.entries(columns)) titles.push(key);
+        for (let [key, value] of Object.entries(recordset[0])) titles.push(key);
         res.send(Object.assign({}, result, { titles }));
     }
     catch (err) {
@@ -103,6 +103,7 @@ app.post('/add/:table', async function (req, res) {
         res.send("all right");
     }
     catch (err) {
+        console.log(err)
         res.status(500).send(JSON.stringify(err));
     }
 })
@@ -124,7 +125,8 @@ app.post('/transaction/:action', async function (req, res) {
 app.get('/changeRow/:table', async function (req, res) {
     try {
         let { table } = req.params;
-        let result = await getChangeRowInfo(table);
+        let recordset = await getChangeRowInfo(table);
+        let result = { recordset }
         res.send(JSON.stringify(result));
     }
     catch (e) {

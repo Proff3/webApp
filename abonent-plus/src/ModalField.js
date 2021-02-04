@@ -11,7 +11,7 @@ class ModalField extends React.Component {
     }
 
     handleChange(e) {
-        let value = e.target.value === `null` || e.target.value === `` ? undefined : e.target.value;
+        let value = e.target.value === "true" ? 1 : e.target.value === "false" ? 0 : e.target.value;
         e.target.classList.remove("is-danger")
         this.props.handleChange(this.props.idx, value);
     }
@@ -41,6 +41,7 @@ class ModalField extends React.Component {
 
     render() {
         let value = this.props.title.includes("DATE") && this.props.value !== null ? this.props.value.slice(0, 10) : this.props.value;
+        if (this.props.title === "EXECUTED") value = value === 1 ? true : false;
         if (this.props.title.includes("CD") && this.props.idx !== 0) {
             let foreignKeys = this.state.foreignKeys;
             return (
@@ -53,6 +54,21 @@ class ModalField extends React.Component {
                                     return <option value={key} key={key}>{key}</option>
                                 })}
                                 {this.props.table !== "nachislSumma" && this.props.table !== "paySumma" ? <option value={null}>null</option> : null}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        if (this.props.title === "EXECUTED" && this.props.idx !== 0) {
+            return (
+                <div class="field">
+                    <label class="label" style={{ "textAlign": "left" }}>{this.props.title}</label>
+                    <div class="control">
+                        <div class="select" style={{ "width": "100%" }}>
+                            <select id={this.props.title} style={{ "width": "100%" }} value={value} onChange={this.handleChange}>
+                                <option value={"true"} key={"true"}>true</option>
+                                <option value={"false"} key={"false"}>false</option>
                             </select>
                         </div>
                     </div>

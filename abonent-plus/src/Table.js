@@ -51,7 +51,6 @@ class Table extends React.Component {
         })
             .then(res => res.json())
             .then(result => {
-                console.log(result.message);
                 if (result.message) {
                     this.setState({
                         isLoaded: true,
@@ -66,7 +65,6 @@ class Table extends React.Component {
                         rows
                     });
                 }
-                console.log(result)
             }, error => {
                 this.setState({
                     isLoaded: true,
@@ -97,7 +95,6 @@ class Table extends React.Component {
     }
 
     async createTransaction() {
-        //console.log('create');
         let login = { login: localStorage.getItem('login'), table: this.props.table };
         return fetch(`/transaction/create`, {
             method: 'POST',
@@ -109,7 +106,6 @@ class Table extends React.Component {
     }
 
     async commitTransaction() {
-        console.log('commit');
         let login = { login: localStorage.getItem('commit') };
         return fetch(`/transaction/commit`, {
             method: 'POST',

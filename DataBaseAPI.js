@@ -1,19 +1,20 @@
 require('dotenv').config()
-const User = require('./User.js');
-const config = `mssql://${process.env.login}:${process.env.password}@localhost/AbonentPlus`;
-const sql = require('mssql');
+const { mysqlConnection } = require('./MysqlAsyncWrapper.js')
+const config = {
+    host: 'localhost',
+    user: `${process.env.login}`,
+    password: `${process.env.password}`,
+    database: 'abonentplus'
+};
 
 let users = {};
 
 async function updateTable(login, table, item, pkField) {
     try {
-        let localSql = users[login].localSql;
-        let transaction = users[login].transaction;
-        const request = new localSql.Request(transaction);
+        let localConnection = users[login];
+        if (item.key.includes("DATE") && item.value !== null) item.value = item.value.slice(0, 10);
         try {
-            await request
-                .input('value', item.value)
-                .query(`UPDATE ${table} SET ${item.key} = @value WHERE ${pkField.key} = ${pkField.value}`);
+            await localConnection.query(`UPDATE ${table} SET ${item.key} = ? WHERE ${pkField.key} = ${pkField.value}`, [item.value]);
         } catch (err) {
             err.key = item.key;
             err.value = item.value;
@@ -25,17 +26,13 @@ async function updateTable(login, table, item, pkField) {
     }
 }
 
-async function getTable(login, table) {
+async function getTable(login, table) {//using transactions here because they are not needed to be controlled
     try {
         await createTransaction(login);
-        let localSql = users[login].localSql;
-        let transaction = users[login].transaction;
-        await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
-        const request = new localSql.Request(transaction);
+        let localConnection = users[login];
         let result
         try {
-            result = await request
-                .query(`SELECT * FROM ${table}`);
+            result = await localConnection.query(`SELECT * FROM ${table}`);
         } catch (err) {
             if (err.code !== "ETIMEOUT") {
                 console.log(err);
@@ -52,12 +49,8 @@ async function getTable(login, table) {
 
 async function deleteRow(table, login, key, value) {
     try {
-        let localSql = users[login].localSql;
-        let transaction = users[login].transaction;
-        const request = new localSql.Request(transaction);
-        let result = await request
-            .input('value', value)
-            .query(`DELETE FROM ${table} WHERE ${key} = '${value}'`);
+        let localConnection = users[login];
+        let result = await localConnection.query(`DELETE FROM ${table} WHERE ${key} = '${value}'`);
         return result;
     } catch (e) {
         if (err) throw (err);
@@ -67,22 +60,15 @@ async function deleteRow(table, login, key, value) {
 
 async function addRow(table, login, changingRow) {
     try {
-        let localSql = users[login].localSql;
-        let transaction = users[login].transaction;
-        const request = new localSql.Request(transaction);
+        let localConnection = users[login];
         let sqlRow = ``;
-        changingRow.forEach((entry, idx) => {
-            if (entry.value === null) {
-                request.input(`value${idx}`, entry.value)
-                sqlRow += `@value${idx},`
-            } else {
-                sqlRow += `'${entry.value}',`
-            }
+        changingRow.forEach(entry => {
+            if (entry.key.includes("DATE") && entry.value !== null) entry.value = entry.value.slice(0, 10);
+            sqlRow += entry.value === null ? `${entry.value},` : `'${entry.value}',`;
         });
         sqlRow = sqlRow.slice(0, -1);
         try {
-            await request
-                .query(`INSERT INTO ${table} VALUES(${sqlRow})`);
+            await localConnection.query(`INSERT INTO ${table} VALUES(${sqlRow})`);
         } catch (err) {
             console.log(err);
             throw (err);
@@ -94,7 +80,7 @@ async function addRow(table, login, changingRow) {
 
 async function commitTransaction(login) {
     try {
-        await new Promise(resolve => users[login].transaction.commit(resolve));
+        await users[login].commitTransaction();
     } catch (e) {
         if (err) throw (err);
         console.log(err);
@@ -103,26 +89,20 @@ async function commitTransaction(login) {
 
 async function createTransaction(login) {
     try {
-        let localSql = Object.assign({}, sql);
-        await localSql.connect(config);
-        let transaction = new localSql.Transaction();
-        await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promis
-        users[login] = { transaction, localSql };
+        let localSql = mysqlConnection(config);
+        await localSql.beginTransaction();
+        users[login] = localSql;
     } catch (e) {
         if (err) throw (err);
         console.log(err);
     }
 };
 
-async function getChangeRowInfo(table) {
+async function getChangeRowInfo(table) { //using transactions here because they are not needed to be controlled
     try {
         await createTransaction(table);
-        let localSql = users[table].localSql;
-        let transaction = users[table].transaction;
-        await new Promise(resolve => transaction.begin(resolve));//The transaction.begin does not return a Promise
-        let request = new localSql.Request(transaction);
-        let result = await request
-            .query(`SELECT * FROM ${table}`)
+        let localConnection = users[table];
+        let result = await localConnection.query(`SELECT * FROM ${table}`)
         await commitTransaction(table);
         return result;
     } catch (err) {
