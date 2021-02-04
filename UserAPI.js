@@ -1,10 +1,10 @@
 require('dotenv').config()
 const { mysqlConnection } = require('./MysqlAsyncWrapper.js')
 const config = {
-    host: 'localhost',
-    user: 'User',
-    password: 'WOwnib846',
-    database: 'abonentplus'
+    host: `${process.env.host}`,
+    user: `${process.env.login}`,
+    password: `${process.env.password}`,
+    database: `${process.env.database}`
 };
 //const mysql = require('mysql');
 
