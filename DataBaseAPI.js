@@ -15,8 +15,8 @@ async function updateTable(login, table, item, pkField) {
         if (item.key.includes("DATE") && item.value !== null) item.value = item.value.slice(0, 10);
         await localConnection.query({ sql: `UPDATE ${table} SET ${item.key} = ? WHERE ${pkField.key} = ${pkField.value}`, values: [item.value], timeout: 10000 });
     } catch (err) {
-        if (err.code === 'PROTOCOL_SEQUENCE_TIMEOUT') {
-            await createTransaction(login);//creating new connection due to fatal error of the previous one
+        if (err.code === 'PROTOCOL_SEQUENCE_TIMEOUT' || err.errno === 1226) {
+            //await createTransaction(login);//creating new connection due to fatal error of the previous one
             err = new Error("The table is changing!");
             err.mes = "В данный момент таблица редактируется!";
         } else {
@@ -106,17 +106,16 @@ async function createTransaction(login) {
         let localSql = mysqlConnection(config);
         try {
             await localSql.beginTransaction();
+            users[login] = localSql;
         } catch (err) {
-            console.log(err);
+            console.log(err.errno);
             if (err.errno === 1226) {
                 err = new Error("The table is changing!");
                 err.mes = "В данный момент таблица редактируется!";
             }
             throw (err)
         }
-        //await localSql.query('START TRANSACTION');
-        users[login] = localSql;
-    } catch (e) {
+    } catch (err) {
         console.log(err);
         throw (err);
     }
@@ -124,16 +123,17 @@ async function createTransaction(login) {
 
 async function closeConnection(login) {
     try {
-        try {
-            await users[login].commitTransaction();
-        } catch (e) {
-            await users[login].rollbackTransaction();
-        }
+        // try {
+        //     await users[login].commitTransaction();
+        // } catch (e) {
+        //     console.log(e);
+        //     await users[login].rollbackTransaction();
+        // }
         console.log(login + " disconnected");
         await users[login].close();
-    } catch (e) {
-        if (err) throw (err);
+    } catch (err) {
         console.log(err);
+        throw (err);
     }
 }
 
