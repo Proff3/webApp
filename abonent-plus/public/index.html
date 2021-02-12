@@ -21,16 +21,16 @@
 </body>
 
 <script>
-  window.addEventListener("unload", async () => { //close SQL connection
-    let login = { login: localStorage.getItem('login') };
-    await fetch(`/closeConnection`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-      },
-      body: JSON.stringify(login)
-    }).catch(err => console.log(err))
-  });
+  // window.addEventListener("unload", async () => { //close SQL connection
+  //   let login = { login: localStorage.getItem('login') };
+  //   await fetch(`/closeConnection`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json;charset=utf-8'
+  //     },
+  //     body: JSON.stringify(login)
+  //   }).catch(err => console.log(err))
+  // });
 </script>
 
 </html>

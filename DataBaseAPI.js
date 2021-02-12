@@ -4,10 +4,9 @@ const config = {
     host: `${process.env.host}`,
     user: `${process.env.login}`,
     password: `${process.env.password}`,
-    database: `${process.env.database}`,
-    port: 3306
+    database: `${process.env.database}`
 };
-
+let tableConnection = mysqlConnection(config);
 let users = {};
 
 async function updateTable(login, table, item, pkField) {
@@ -30,18 +29,11 @@ async function updateTable(login, table, item, pkField) {
 
 async function getTable(login, table) {//using transactions here because they are not needed to be controlled
     try {
-        await createTransaction(login);
-        let localConnection = users[login];
-        let result
-        try {
-            result = await localConnection.query(`SELECT * FROM ${table}`);
-        } catch (err) {
-            if (err.code !== "ETIMEOUT") {//MSSQL server
-                console.log(err);
-                throw (err);
-            }
-        }
-        await commitTransaction(login);
+        //await createTransaction(table);
+        //let localConnection = users[table];
+        let result = await tableConnection.query(`SELECT * FROM ${table}`);
+        //await commitTransaction(table);
+        //await closeConnection(table);
         return result;
     } catch (err) {
         if (err) throw (err);
@@ -110,19 +102,34 @@ async function rollbackTransaction(login) {
 
 async function createTransaction(login) {
     try {
+        console.log(login + " connected");
         let localSql = mysqlConnection(config);
-        await localSql.beginTransaction();
+        try {
+            await localSql.beginTransaction();
+        } catch (err) {
+            console.log(err);
+            if (err.errno === 1226) {
+                err = new Error("The table is changing!");
+                err.mes = "В данный момент таблица редактируется!";
+            }
+            throw (err)
+        }
         //await localSql.query('START TRANSACTION');
         users[login] = localSql;
     } catch (e) {
-        if (err) throw (err);
         console.log(err);
+        throw (err);
     }
 };
 
 async function closeConnection(login) {
     try {
-        console.log(login + " close");
+        try {
+            await users[login].commitTransaction();
+        } catch (e) {
+            await users[login].rollbackTransaction();
+        }
+        console.log(login + " disconnected");
         await users[login].close();
     } catch (e) {
         if (err) throw (err);
@@ -132,10 +139,11 @@ async function closeConnection(login) {
 
 async function getChangeRowInfo(table) { //using transactions here because they are not needed to be controlled
     try {
-        await createTransaction(table);
-        let localConnection = users[table];
-        let result = await localConnection.query(`SELECT * FROM ${table}`)
-        await commitTransaction(table);
+        //await createTransaction(table);
+        //let localConnection = users[table];
+        let result = await tableConnection.query(`SELECT * FROM ${table}`);
+        //await commitTransaction(table);
+        //await closeConnection(table);
         return result;
     } catch (err) {
         if (err) throw (err);

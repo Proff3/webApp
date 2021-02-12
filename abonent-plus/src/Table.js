@@ -85,14 +85,14 @@ class Table extends React.Component {
     }
 
     handleClosingModal(e) {
-        // let login = { login: localStorage.getItem('login') };
-        // fetch(`/transaction/rollback`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json;charset=utf-8'
-        //     },
-        //     body: JSON.stringify(login)
-        // })
+        let login = { login: localStorage.getItem('login') };
+        fetch(`/closeConnection`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(login)
+        })
         this.setState({ numRowChanging: null, isAdding: false })
     }
 

@@ -23,7 +23,7 @@ class Router extends React.Component {
         } else {
             return (
                 <Switch>
-                    <Route exact path="/">
+                    <Route path="/">
                         <Authentification changeAuth={this.props.changeAuth} />
                     </Route>
                     <Route path="/registration">

@@ -133,7 +133,7 @@ class changingValuesTable extends React.Component {
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <p class="modal-card-title">Окно редактирования {title}</p>
-                        <button class="delete" aria-label="close" onClick={this.handleCommitTransaction}></button>
+                        <button class="delete" aria-label="close" onClick={this.props.handleClosingModal}></button>
                     </header>
                     <section class="modal-card-body">
                         {changingRow.map((element, idx) =>
@@ -148,7 +148,7 @@ class changingValuesTable extends React.Component {
                     <footer class="modal-card-foot">
                         <button class="button is-success" onClick={this.handleUpdating}>Сохранить изменения</button>
                         <button class="button is-danger" onClick={this.handleDelete}>Удалить запись</button>
-                        <button class="button" onClick={this.handleCommitTransaction}>Отмена</button>
+                        <button class="button" onClick={this.props.handleClosingModal}>Отмена</button>
                     </footer>
                 </div>
             </div>

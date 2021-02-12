@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 function NavbarLogin(props) {
 
     let logoutHandler = async function () {
-        let login = { login: localStorage.getItem('login') };
-        await fetch(`/closeConnection`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(login)
-        }).catch(err => console.log(err))
+        // let login = { login: localStorage.getItem('login') };
+        // await fetch(`/closeConnection`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json;charset=utf-8'
+        //     },
+        //     body: JSON.stringify(login)
+        // }).catch(err => console.log(err))
         localStorage.removeItem('login');
         props.changeAuth();
     }
