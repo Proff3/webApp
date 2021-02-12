@@ -20,10 +20,10 @@ class LogInButton extends React.Component {
         }).then(res => {
             if (!res.ok) {
                 this.setState({ isLoggedId: false });
-                res.json().then(alert)//Сделать нормальное окошко!
+                res.json().then(alert)
             } else {
-                this.props.changeAuth();
                 localStorage.setItem('login', login);
+                this.props.changeAuth();
                 this.setState({ isLoggedId: true });
             }
         })

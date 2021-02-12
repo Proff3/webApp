@@ -77,11 +77,14 @@ class addingRowTable extends React.Component {
                 e.target.classList.toggle("is-loading");
                 return res.json();//throwing err message
             };
-        }).then(errMes => {
-            alert(errMes.sqlMessage);
-            errMes.key = errMes.sqlMessage.split(" ")[6];
-            console.log(errMes.key);
-            document.getElementById(errMes.key).classList.toggle("is-danger").focus();
+        }).then(err => {
+            if (err.mes === "В данный момент таблица редактируется!") alert(err.mes)
+            else {
+                alert(err.sqlMessage);
+                err.key = err.sqlMessage.split(" ")[6];
+                console.log(err.key);
+                document.getElementById(err.key).classList.toggle("is-danger").focus();
+            }
         }).catch(err => console.log(err));
     }
 

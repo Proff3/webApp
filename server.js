@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction } = require('./DataBaseAPI')
+const { getChangeRowInfo, updateTable, getTable, deleteRow, addRow, createTransaction, commitTransaction, rollbackTransaction, closeConnection } = require('./DataBaseAPI')
 const { authentification, registration } = require('./UserAPI');
 require('dotenv').config();
 var cors = require('cors');
@@ -36,7 +36,7 @@ app.post('/table/:table', async function (req, res) {
         res.send(Object.assign({}, result, { titles }));
     }
     catch (err) {
-        if (err.code !== "ETIMEOUT") res.send({ message: "В данный момент таблица редактируется!" })
+
         console.error(err)
         res.status(500).send(err.message);
     }
@@ -58,12 +58,17 @@ app.post('/change/:table', async function (req, res) {
         let { table } = req.params;
         let { changingRow, pkField, login } = req.body;
         for (item of changingRow) {
+            console.log(`Entered with key ${item.key}`);
             await updateTable(login, table, item, pkField);
         }
+        console.log(`server commit`)
         await commitTransaction(login);
         res.send("all right")
     }
     catch (err) {
+        console.log(`server catch`);
+        console.log(err.message + " message");
+        console.log(err);
         res.status(500).send(JSON.stringify(err));
     }
 });
@@ -113,7 +118,20 @@ app.post('/transaction/:action', async function (req, res) {
         let { action } = req.params;
         let { login } = req.body;
         if (action === 'create') { await createTransaction(login) }
+        else if (action === 'rollback') { await rollbackTransaction(login) }
         else await commitTransaction(login);
+        res.send("all right");
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send(JSON.stringify(err));
+    }
+})
+
+app.post('/closeConnection', async function (req, res) {
+    try {
+        let { login } = req.body;
+        await closeConnection(login);
         res.send("all right");
     }
     catch (err) {

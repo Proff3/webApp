@@ -39,7 +39,7 @@ class Table extends React.Component {
         this.commitTransaction = this.commitTransaction.bind(this);
     }
 
-    async updateTable() {
+    updateTable() {
         this.setState({ isLoaded: false });
         let login = { login: localStorage.getItem('login') };
         fetch(`/table/${this.props.table}`, {
@@ -78,23 +78,31 @@ class Table extends React.Component {
         this.updateTable();
     }
 
-    async handleChangeRow(idx) {
+    handleChangeRow(idx) {
         this.createTransaction().then(() =>
             this.setState({ numRowChanging: idx })
         );
     }
 
     handleClosingModal(e) {
+        // let login = { login: localStorage.getItem('login') };
+        // fetch(`/transaction/rollback`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json;charset=utf-8'
+        //     },
+        //     body: JSON.stringify(login)
+        // })
         this.setState({ numRowChanging: null, isAdding: false })
     }
 
-    async handleAddingRow() {
+    handleAddingRow() {
         this.createTransaction().then(() =>
             this.setState(prevState => ({ isAdding: !prevState.isAdding }))
         );
     }
 
-    async createTransaction() {
+    createTransaction() {
         let login = { login: localStorage.getItem('login'), table: this.props.table };
         return fetch(`/transaction/create`, {
             method: 'POST',
@@ -105,7 +113,7 @@ class Table extends React.Component {
         })
     }
 
-    async commitTransaction() {
+    commitTransaction() {
         let login = { login: localStorage.getItem('commit') };
         return fetch(`/transaction/commit`, {
             method: 'POST',
@@ -123,6 +131,7 @@ class Table extends React.Component {
     }
 
     render() {
+        console.log(localStorage.getItem('login'));
         const { error, isLoaded, response } = this.state;
         if (error) {
             return <div>Ошибка: {error.message}</div>;
