@@ -4,7 +4,8 @@ const config = {
     host: `${process.env.host}`,
     user: `${process.env.login}`,
     password: `${process.env.password}`,
-    database: `${process.env.database}`
+    database: `${process.env.database}`,
+    port: 3306
 };
 
 let users = {};
