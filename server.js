@@ -62,7 +62,7 @@ app.post('/change/:table', async function (req, res) {
             await DataBaseAPI.updateTable(login, table, item, pkField);
         }
         console.log(`server commit`)
-        await DataBaseAPI.ommitTransaction(login);
+        await DataBaseAPI.commitTransaction(login);
         res.send("all right")
     }
     catch (err) {

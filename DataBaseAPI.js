@@ -126,7 +126,7 @@ class DataBaseAPI {
         }
     }
 
-    async getChangeRowInfo(table) { //using transactions here because they are not needed to be controlled
+    async getChangeRowInfo(table) {
         try {
             let result = await tableConnection.query(`SELECT * FROM ${table}`);
             return result;
