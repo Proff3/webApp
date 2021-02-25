@@ -43,7 +43,7 @@ class DataBaseAPI {
             return result;
         } catch (err) {
             if (err.code === 'PROTOCOL_SEQUENCE_TIMEOUT') {
-                await createTransaction(login);//creating new connection due to fatal error of the previous one
+                //await localConnection.createTransaction(login);//creating new connection due to fatal error of the previous one
                 err = new Error("The table is changing!");
                 err.mes = "В данный момент таблица редактируется!";
             }
@@ -65,7 +65,7 @@ class DataBaseAPI {
                 await localConnection.query({ sql: `INSERT INTO ${table} VALUES(${sqlRow})`, timeout: 5000 });
             } catch (err) {
                 if (err.code === 'PROTOCOL_SEQUENCE_TIMEOUT') {
-                    await createTransaction(login);//creating new connection due to fatal error of the previous one
+                    //await localConnection.createTransaction(login);//creating new connection due to fatal error of the previous one
                     err = new Error("The table is changing!");
                     err.mes = "В данный момент таблица редактируется!";
                 }
@@ -103,7 +103,7 @@ class DataBaseAPI {
                 await localSql.beginTransaction();
                 users[login] = localSql;
             } catch (err) {
-                console.log(err.errno);
+                console.log(err);
                 if (err.errno === 1226) {
                     err = new Error("The table is changing!");
                     err.mes = "В данный момент таблица редактируется!";

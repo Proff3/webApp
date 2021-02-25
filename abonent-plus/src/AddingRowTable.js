@@ -78,7 +78,10 @@ class addingRowTable extends React.Component {
                 return res.json();//throwing err message
             };
         }).then(err => {
-            if (err.mes === "В данный момент таблица редактируется!") alert(err.mes)
+            if (err.mes === "В данный момент таблица редактируется!") {
+                alert(err.mes);
+                enviroment.props.handleClosingModal();
+            }
             else {
                 alert(err.sqlMessage);
                 err.key = err.sqlMessage.split(" ")[6];

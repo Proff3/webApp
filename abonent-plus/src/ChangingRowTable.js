@@ -116,7 +116,11 @@ class changingValuesTable extends React.Component {
                 return res.json(); //throwing err message
             };
         }).then(err => {
-            if (err.mes === "В данный момент таблица редактируется!") alert(err.mes)
+            if (err.mes === "В данный момент таблица редактируется!") {
+                alert(err.mes);
+                enviroment.props.updateTable();
+                enviroment.props.handleClosingModal();
+            }
             else {
                 alert(`Некорректное значение поля: ${err.key}`);
                 document.getElementById(err.key).classList.toggle("is-danger").focus();
