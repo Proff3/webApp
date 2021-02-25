@@ -36,7 +36,7 @@ function UserAPI(config) {
 
         async registration(login, pass) {
             try {
-                if (await isUserExist(login)) throw new Error("Пользователь уже существует");
+                if (await this.isUserExist(login)) throw new Error("Пользователь уже существует");
                 await connection.query(`INSERT INTO Users VALUES(?,?)`, [login, pass])
             } catch (err) {
                 console.log(err);
